@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// schema.prisma
+
+// Define the students table
+model Student {
+  id            Int          @id @default(autoincrement())
+  matricNumber  String       @unique
+  name          String
+  department    String
+  is_course_rep Boolean?
+  password      String       @default("1234")
+  attendances   Attendance[]
+}
+
+model Rep {
+  id            Int          @id @default(autoincrement())
+  matricNumber  String       @unique
+  name          String
+  department    String
+  is_course_rep Boolean?
+  attendances   Attendance[]
+  password      String       @default("1234")
+}
+
+// Define the attendance table
+model Attendance {
+  id           Int                   @id @default(autoincrement())
+  classId      Int
+  code         String                @unique
+  course_code  String?
+  course_title String?
+  startTime    DateTime
+  endTime      DateTime
+  rep          Rep                   @relation(fields: [repId], references: [id])
+  repId        Int                   @default(1)
+  students     Student[]
+  signatures   AttendanceSignature[]
+}
+
+// Define the attendance_signatures table
+model AttendanceSignature {
+  id           Int        @id @default(autoincrement())
+  name         String     @default("null")
+  attendanceId Int
+  matricNumber String
+  signature    String
+  signTime     DateTime
+  attendance   Attendance @relation(fields: [attendanceId], references: [id])
+}

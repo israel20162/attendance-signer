@@ -1,0 +1,22 @@
+/*
+  Warnings:
+
+  - Added the required column `department` to the `Student` table without a default value. This is not possible if the table is not empty.
+
+*/
+-- RedefineTables
+PRAGMA foreign_keys=OFF;
+CREATE TABLE "new_Student" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "matricNumber" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "department" TEXT NOT NULL,
+    "is_course_rep" BOOLEAN,
+    "password" TEXT DEFAULT '1234'
+);
+INSERT INTO "new_Student" ("id", "matricNumber", "name") SELECT "id", "matricNumber", "name" FROM "Student";
+DROP TABLE "Student";
+ALTER TABLE "new_Student" RENAME TO "Student";
+CREATE UNIQUE INDEX "Student_matricNumber_key" ON "Student"("matricNumber");
+PRAGMA foreign_key_check;
+PRAGMA foreign_keys=ON;
